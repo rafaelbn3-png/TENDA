@@ -35,6 +35,9 @@ const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'hi
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.xr.enabled = true;
+// Panoramas 360° precisam usar o centro da imagem como origem do observador.
+// O modo local evita que a origem no chão do Quest aumente artificialmente a cena.
+renderer.xr.setReferenceSpaceType('local');
 document.body.appendChild(renderer.domElement);
 const isQuestBrowser = /OculusBrowser|Quest/i.test(navigator.userAgent);
 if (isQuestBrowser && 'xr' in navigator) document.body.appendChild(VRButton.createButton(renderer));
