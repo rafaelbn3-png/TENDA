@@ -54,9 +54,9 @@ let orientationActive = false;
 
 const motionButton = document.querySelector('#motion-button');
 const motionStatus = document.querySelector('#motion-status');
-const isTouchDevice = navigator.maxTouchPoints > 1 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const isMobileBrowser = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 const supportsDeviceOrientation = 'DeviceOrientationEvent' in globalThis;
-motionButton.hidden = !(isTouchDevice && supportsDeviceOrientation);
+motionButton.hidden = !(isMobileBrowser && supportsDeviceOrientation);
 
 async function enableDeviceOrientation() {
   const button = motionButton;
