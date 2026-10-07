@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Passeio 360° — Apartamento</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="hud">
+      <div class="brand">Apartamento 360°</div>
+      <div id="environment-name">Sala</div>
+      <div class="hint">Arraste para olhar · use os botões do rodapé para mudar de ambiente</div>
+    </div>
+    <div id="loading">Carregando panorama…</div>
+    <div id="error" hidden></div>
+    <button id="motion-button" type="button">Ativar movimento do celular</button>
+    <div id="motion-status" hidden aria-live="polite"></div>
+    <div id="menu" aria-label="Ambientes"></div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
