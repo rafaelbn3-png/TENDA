@@ -1,6 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { VRButton } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/webxr/VRButton.js';
-import { DeviceOrientationControls } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/DeviceOrientationControls.js';
 
 const BASE = './APARTAMENTO/';
 const environments = [
@@ -48,9 +47,32 @@ scene.add(sphere);
 let current = environments[0];
 let dragging = false, lastX = 0, lastY = 0;
 const buttonWasPressed = new Map();
-const orientationControls = new DeviceOrientationControls(camera);
-orientationControls.enabled = false;
 let orientationActive = false;
+const orientationState = { alpha: 0, beta: 0, gamma: 0 };
+const orientationQuaternion = new THREE.Quaternion();
+const orientationEuler = new THREE.Euler();
+const orientationZee = new THREE.Vector3(0, 0, 1);
+const orientationCorrection = new THREE.Quaternion(-Math.sqrt(0.5), 0, 0, Math.sqrt(0.5));
+const orientationScreen = new THREE.Quaternion();
+
+function handleDeviceOrientation(event) {
+  orientationState.alpha = event.alpha || 0;
+  orientationState.beta = event.beta || 0;
+  orientationState.gamma = event.gamma || 0;
+}
+
+function updateDeviceOrientation() {
+  const alpha = THREE.MathUtils.degToRad(orientationState.alpha);
+  const beta = THREE.MathUtils.degToRad(orientationState.beta);
+  const gamma = THREE.MathUtils.degToRad(orientationState.gamma);
+  orientationEuler.set(beta, alpha, -gamma, 'YXZ');
+  orientationQuaternion.setFromEuler(orientationEuler);
+  orientationQuaternion.multiply(orientationCorrection);
+  const angle = THREE.MathUtils.degToRad(screen.orientation?.angle || 0);
+  orientationScreen.setFromAxisAngle(orientationZee, -angle);
+  orientationQuaternion.multiply(orientationScreen);
+  camera.quaternion.copy(orientationQuaternion);
+}
 
 const motionButton = document.querySelector('#motion-button');
 const motionStatus = document.querySelector('#motion-status');
@@ -77,8 +99,7 @@ async function enableDeviceOrientation() {
       throw new Error('Permissão de sensores recusada.');
     }
 
-    orientationControls.connect();
-    orientationControls.enabled = true;
+    addEventListener('deviceorientation', handleDeviceOrientation, true);
     orientationActive = true;
     button.hidden = true;
     status.textContent = 'Movimento ativado';
@@ -167,6 +188,6 @@ loadEnvironment('sala');
 motionButton.addEventListener('click', enableDeviceOrientation);
 renderer.setAnimationLoop(() => {
   pollQuestButtons();
-  if (orientationActive && !renderer.xr.isPresenting) orientationControls.update();
+  if (orientationActive && !renderer.xr.isPresenting) updateDeviceOrientation();
   renderer.render(scene, camera);
 });
