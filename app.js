@@ -36,7 +36,8 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.xr.enabled = true;
 document.body.appendChild(renderer.domElement);
-if ('xr' in navigator) document.body.appendChild(VRButton.createButton(renderer));
+const isQuestBrowser = /OculusBrowser|Quest/i.test(navigator.userAgent);
+if (isQuestBrowser && 'xr' in navigator) document.body.appendChild(VRButton.createButton(renderer));
 
 const loader = new THREE.TextureLoader();
 const sphere = new THREE.Mesh(
