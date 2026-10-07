@@ -44,7 +44,7 @@ if (isQuestBrowser && 'xr' in navigator) document.body.appendChild(VRButton.crea
 
 const loader = new THREE.TextureLoader();
 const sphere = new THREE.Mesh(
-  new THREE.SphereGeometry(50, 64, 40),
+  new THREE.SphereGeometry(5, 64, 40),
   new THREE.MeshBasicMaterial({ side: THREE.BackSide })
 );
 scene.add(sphere);
