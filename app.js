@@ -24,7 +24,7 @@ const environments = [
   { id: 'quarto-casal', name: 'Quarto casal', file: 'QUARTO_CASAL_A.jpg', links: [
     { label: 'Corredor', target: 'corredor', yaw: 170 }
   ]},
-  { id: 'quarto-solteiro', name: 'Quarto solteiro', file: 'QUARTO_SOLTEIRO.jpg', links: [
+  { id: 'quarto-solteiro', name: 'Quarto solteiro', file: 'QUARTO_SOLTEIRO_A.jpg', links: [
     { label: 'Corredor', target: 'corredor', yaw: 170 }
   ]}
 ];
@@ -52,9 +52,15 @@ const orientationControls = new DeviceOrientationControls(camera);
 orientationControls.enabled = false;
 let orientationActive = false;
 
+const motionButton = document.querySelector('#motion-button');
+const motionStatus = document.querySelector('#motion-status');
+const isTouchDevice = navigator.maxTouchPoints > 1 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const supportsDeviceOrientation = 'DeviceOrientationEvent' in globalThis;
+motionButton.hidden = !(isTouchDevice && supportsDeviceOrientation);
+
 async function enableDeviceOrientation() {
-  const button = document.querySelector('#motion-button');
-  const status = document.querySelector('#motion-status');
+  const button = motionButton;
+  const status = motionStatus;
   button.disabled = true;
 
   try {
@@ -158,7 +164,7 @@ renderer.domElement.addEventListener('pointermove', (event) => {
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
 updateMenu();
 loadEnvironment('sala');
-document.querySelector('#motion-button').addEventListener('click', enableDeviceOrientation);
+motionButton.addEventListener('click', enableDeviceOrientation);
 renderer.setAnimationLoop(() => {
   pollQuestButtons();
   if (orientationActive && !renderer.xr.isPresenting) orientationControls.update();
