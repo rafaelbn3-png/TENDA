@@ -153,6 +153,20 @@ function changeEnvironment(step) {
   loadEnvironment(environments[nextIndex].id);
 }
 
+function zoomCamera(amount) {
+  camera.fov = THREE.MathUtils.clamp(camera.fov + amount, 35, 85);
+  camera.updateProjectionMatrix();
+}
+
+function exitImmersiveView() {
+  const session = renderer.xr.getSession();
+  if (session) {
+    session.end();
+  } else if (document.fullscreenElement) {
+    document.exitFullscreen();
+  }
+}
+
 function pollQuestButtons() {
   const session = renderer.xr.getSession();
   if (!session) return;
@@ -160,15 +174,15 @@ function pollQuestButtons() {
   for (const source of session.inputSources) {
     if (!source.gamepad || !source.handedness) continue;
     const buttons = source.gamepad.buttons;
-    // Standard XR mapping: button 4/5 are A-X and B-Y on Quest controllers.
+    // Quest mapping: A/B zoom, X changes environment, Y exits immersive view.
     const mappings = source.handedness === 'right'
-      ? [[4, 1], [5, -1]] // A: next, B: previous
-      : [[4, -1], [5, 1]]; // X: previous, Y: next
+      ? [[4, () => zoomCamera(-5)], [5, () => zoomCamera(5)]] // A: in, B: out
+      : [[4, () => changeEnvironment(1)], [5, exitImmersiveView]]; // X: next, Y: exit
 
-    for (const [buttonIndex, step] of mappings) {
+    for (const [buttonIndex, action] of mappings) {
       const key = `${source.handedness}-${buttonIndex}`;
       const pressed = Boolean(buttons[buttonIndex]?.pressed);
-      if (pressed && !buttonWasPressed.get(key)) changeEnvironment(step);
+      if (pressed && !buttonWasPressed.get(key)) action();
       buttonWasPressed.set(key, pressed);
     }
   }
