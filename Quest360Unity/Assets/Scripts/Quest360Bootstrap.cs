@@ -73,6 +73,13 @@ public sealed class Quest360Bootstrap : MonoBehaviour
 
     private void Update()
     {
+        Camera headCamera = Camera.main;
+        if (headCamera != null)
+        {
+            headCamera.transform.localPosition = InputTracking.GetLocalPosition(XRNode.Head);
+            headCamera.transform.localRotation = InputTracking.GetLocalRotation(XRNode.Head);
+        }
+
         InputDevice left = InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
         InputDevice right = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
         bool x = Read(left, CommonUsages.primaryButton);
