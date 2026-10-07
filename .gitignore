@@ -1,1 +1,8 @@
 .compressed-images/
+TENDA-Quest.apk
+Quest360Unity/[Ll]ibrary/
+Quest360Unity/[Tt]emp/
+Quest360Unity/[Ll]ogs/
+Quest360Unity/[Oo]bj/
+Quest360Unity/[Uu]ser[Ss]ettings/
+Quest360Unity/build.log
